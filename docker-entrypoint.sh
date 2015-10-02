@@ -7,6 +7,6 @@ if [ ! -e '/var/www/html/version.php' ]; then
 fi
 
 # ocdownloader requirement
-aria2c --enable-rpc --rpc-allow-origin-all -c -D --log=/dev/stdout --check-certificate=false
+/usr/bin/aria2c --enable-rpc --rpc-allow-origin-all -c -D --log=/dev/stdout --check-certificate=false &
 
 exec "$@"
