@@ -54,7 +54,7 @@ RUN curl -fsSL -o owncloud.tar.bz2 \
 
 RUN curl -fsSL -o oc.zip \
                 "https://github.com/DjazzLab/ocdownloader/archive/master.zip" \
-        && unzip oc.zip -d /usr/src/apps \
+        && unzip oc.zip -d /usr/src/owncloud/apps \
         && rm oc.zip
 
 COPY docker-entrypoint.sh /entrypoint.sh
