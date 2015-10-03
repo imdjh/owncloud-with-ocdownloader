@@ -52,9 +52,11 @@ RUN curl -fsSL -o owncloud.tar.bz2 \
 	&& tar -xjf owncloud.tar.bz2 -C /usr/src/ \
 	&& rm owncloud.tar.bz2 owncloud.tar.bz2.asc
 
+# Rename dirctory to satify owncloud
 RUN curl -fsSL -o oc.zip \
                 "https://github.com/DjazzLab/ocdownloader/archive/master.zip" \
         && unzip oc.zip -d /usr/src/owncloud/apps \
+        && mv /usr/src/owncloud/apps/*master /usr/src/owncloud/apps/ocdownloader \
         && rm oc.zip
 
 COPY docker-entrypoint.sh /entrypoint.sh
