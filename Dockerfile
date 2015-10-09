@@ -64,5 +64,8 @@ RUN curl -fsSL -o oc.zip \
 COPY docker-entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
+# BAD Hotfix: give www-data permission to login
+RUN usermod -s /bin/sh www-data
+
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["apache2-foreground"]
