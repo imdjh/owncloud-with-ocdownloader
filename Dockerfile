@@ -52,11 +52,13 @@ RUN curl -fsSL -o owncloud.tar.bz2 \
 	&& tar -xjf owncloud.tar.bz2 -C /usr/src/ \
 	&& rm owncloud.tar.bz2 owncloud.tar.bz2.asc
 
-# Rename dirctory to satify owncloud
+# Rename dirctory to appid & enable ocdownloader by default
 RUN curl -fsSL -o oc.zip \
                 "https://github.com/DjazzLab/ocdownloader/archive/master.zip" \
-        && unzip oc.zip -d /usr/src/owncloud/apps \
-        && mv /usr/src/owncloud/apps/*master /usr/src/owncloud/apps/ocdownloader \
+        && rm -rf /dev/shm/ocdownloader-master \
+        && unzip oc.zip -d /dev/shm \
+        && sed -i 's|</id>|</id><default_enable/>|' /dev/shm/ocdownloader-master/appinfo/info.xml \
+        && mv /dev/shm/ocdownloader-master /usr/src/owncloud/apps/ocdownloader \
         && rm oc.zip
 
 COPY docker-entrypoint.sh /entrypoint.sh
