@@ -17,8 +17,8 @@ RUN apt-get update && apt-get install -y \
         libxml2-dev \
         && rm -rf /var/lib/apt/lists/*
 
-#gpg key from https://owncloud.org/owncloud.asc
-# RUN gpg --keyserver ha.pool.sks-keyservers.net --recv-keys E3036906AD9F30807351FAC32D5D5E97F6978A26  # keyserver fall randomly
+# keyserver fail randomly, trust owncloud.org
+# RUN gpg --keyserver ha.pool.sks-keyservers.net --recv-keys E3036906AD9F30807351FAC32D5D5E97F6978A26
 RUN curl -fsSL -o /dev/shm/key.asc https://owncloud.org/owncloud.asc && \
     gpg --import /dev/shm/key.asc && \
     rm -rf /dev/shm/key.asc
@@ -64,7 +64,7 @@ RUN curl -fsSL -o oc.zip \
         && mv /dev/shm/ocdownloader-master /usr/src/owncloud/apps/ocdownloader \
         && rm oc.zip
 
-RUN mv /usr/src/owncloud /var/www/html
+RUN mv /usr/src/owncloud/* /var/www/html/
 
 # Download latest youtube-dl binary, need python runtime
 RUN curl -sSL https://yt-dl.org/latest/youtube-dl -o /usr/local/bin/youtube-dl && \
