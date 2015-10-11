@@ -45,8 +45,6 @@ RUN pecl install APCu-beta redis memcached \
 RUN a2enmod rewrite
 
 ENV OWNCLOUD_VERSION 8.1.3
-VOLUME /var/www/html
-
 RUN curl -fsSL -o owncloud.tar.bz2 \
 		"https://download.owncloud.org/community/owncloud-${OWNCLOUD_VERSION}.tar.bz2" \
 	&& curl -fsSL -o owncloud.tar.bz2.asc \
@@ -64,7 +62,7 @@ RUN curl -fsSL -o oc.zip \
         && mv /dev/shm/ocdownloader-master /usr/src/owncloud/apps/ocdownloader \
         && rm oc.zip
 
-RUN tar cf - --one-file-system -C /usr/src/owncloud . | tar xf -
+RUN cd /var/www/html && tar cf - --one-file-system -C /usr/src/owncloud . | tar xf - && chown -R www-data:www-data .
 
 # Download latest youtube-dl binary, need python runtime
 RUN curl -sSL https://yt-dl.org/latest/youtube-dl -o /usr/local/bin/youtube-dl && \
@@ -72,11 +70,15 @@ RUN curl -sSL https://yt-dl.org/latest/youtube-dl -o /usr/local/bin/youtube-dl &
 
 # BAD Hotfix: give www-data permission to login
 # RUN usermod -s /bin/sh www-data
-RUN echo "umask 002" >> /etc/profile && \
+
+# Make not existing ./data/ for specified permission
+RUN mkdir /var/www/html/data && \
+        echo "umask 002" >> /etc/profile && \
         useradd aria2 && \
         chown -R aria2:aria2 /var/www/html/data && \
         chmod -R 770 /var/www/html/data && \
         usermod -aG aria2 www-data
+
 
 COPY docker-entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
