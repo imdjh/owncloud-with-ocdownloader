@@ -5,17 +5,17 @@ RUN apt-get update && apt-get install -y \
         curl \
         unzip \
         python \
-	bzip2 \
-	libcurl4-openssl-dev \
-	libfreetype6-dev \
-	libicu-dev \
-	libjpeg-dev \
-	libmcrypt-dev \
-	libmemcached-dev \
-	libpng12-dev \
-	libpq-dev \
-	libxml2-dev \
-	&& rm -rf /var/lib/apt/lists/*
+        bzip2 \
+        libcurl4-openssl-dev \
+        libfreetype6-dev \
+        libicu-dev \
+        libjpeg-dev \
+        libmcrypt-dev \
+        libmemcached-dev \
+        libpng12-dev \
+        libpq-dev \
+        libxml2-dev \
+        && rm -rf /var/lib/apt/lists/*
 
 #gpg key from https://owncloud.org/owncloud.asc
 # RUN gpg --keyserver ha.pool.sks-keyservers.net --recv-keys E3036906AD9F30807351FAC32D5D5E97F6978A26  # keyserver fall randomly
@@ -64,12 +64,11 @@ RUN curl -fsSL -o oc.zip \
         && mv /dev/shm/ocdownloader-master /usr/src/owncloud/apps/ocdownloader \
         && rm oc.zip
 
+RUN mv /usr/src/owncloud /var/www/html
+
 # Download latest youtube-dl binary, need python runtime
 RUN curl -sSL https://yt-dl.org/latest/youtube-dl -o /usr/local/bin/youtube-dl && \
         chmod a+rx /usr/local/bin/youtube-dl
-
-COPY docker-entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
 
 # BAD Hotfix: give www-data permission to login
 # RUN usermod -s /bin/sh www-data
@@ -79,6 +78,8 @@ RUN echo "umask 002" >> /etc/profile && \
         chmod -R 770 /var/www/html/data && \
         usermod -aG aria2 www-data
 
+COPY docker-entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["apache2-foreground"]
