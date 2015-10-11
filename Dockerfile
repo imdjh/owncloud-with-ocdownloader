@@ -64,7 +64,7 @@ RUN curl -fsSL -o oc.zip \
         && mv /dev/shm/ocdownloader-master /usr/src/owncloud/apps/ocdownloader \
         && rm oc.zip
 
-RUN tar cf - --one-file-system -C /usr/src/owncloud | tar xf -
+RUN tar cf - --one-file-system -C /usr/src/owncloud . | tar xf -
 
 # Download latest youtube-dl binary, need python runtime
 RUN curl -sSL https://yt-dl.org/latest/youtube-dl -o /usr/local/bin/youtube-dl && \
