@@ -72,7 +72,13 @@ COPY docker-entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 # BAD Hotfix: give www-data permission to login
-RUN usermod -s /bin/sh www-data
+# RUN usermod -s /bin/sh www-data
+RUN echo "umask 002" >> /etc/profile && \
+        useradd aria2 && \
+        chown -R aria2:aria2 /var/www/html/data && \
+        chmod -R 770 /var/www/html/data && \
+        usermod -aG aria2 www-data
+
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["apache2-foreground"]
