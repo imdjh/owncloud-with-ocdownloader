@@ -73,15 +73,14 @@ RUN curl -sSL https://yt-dl.org/latest/youtube-dl -o /usr/local/bin/youtube-dl &
 
 # Make not existing ./data/ for specified permission
 RUN mkdir /var/www/html/data && \
-        echo "umask 002" >> /etc/profile && \
         useradd aria2 && \
-        chown -R aria2:aria2 /var/www/html/data && \
-        chmod -R 770 /var/www/html/data && \
-        usermod -aG aria2 www-data
+        chown aria2:aria2 /var/www/html/data && \
+        chmod 770 /var/www/html/data && \
+        usermod -aG aria2 www-data && \
+        usermod -aG www-data aria2
 
 
 COPY docker-entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["apache2-foreground"]
