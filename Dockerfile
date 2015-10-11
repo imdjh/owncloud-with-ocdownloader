@@ -4,7 +4,7 @@ RUN apt-get update && apt-get install -y \
         aria2 \
         curl \
         unzip \
-        php5-curl \
+        python \
 	bzip2 \
 	libcurl4-openssl-dev \
 	libfreetype6-dev \
@@ -18,7 +18,10 @@ RUN apt-get update && apt-get install -y \
 	&& rm -rf /var/lib/apt/lists/*
 
 #gpg key from https://owncloud.org/owncloud.asc
-RUN gpg --keyserver ha.pool.sks-keyservers.net --recv-keys E3036906AD9F30807351FAC32D5D5E97F6978A26
+# RUN gpg --keyserver ha.pool.sks-keyservers.net --recv-keys E3036906AD9F30807351FAC32D5D5E97F6978A26  # keyserver fall randomly
+RUN curl -fsSL -o /dev/shm/key.asc https://owncloud.org/owncloud.asc && \
+    gpg --import /dev/shm/key.asc && \
+    rm -rf /dev/shm/key.asc
 
 # https://doc.owncloud.org/server/8.1/admin_manual/installation/source_installation.html#prerequisites
 RUN docker-php-ext-configure gd --with-png-dir=/usr --with-jpeg-dir=/usr \
@@ -60,6 +63,10 @@ RUN curl -fsSL -o oc.zip \
         && sed -i 's|</id>|</id><default_enable/>|' /dev/shm/ocdownloader-master/appinfo/info.xml \
         && mv /dev/shm/ocdownloader-master /usr/src/owncloud/apps/ocdownloader \
         && rm oc.zip
+
+# Download latest youtube-dl binary, need python runtime
+RUN curl -sSL https://yt-dl.org/latest/youtube-dl -o /usr/local/bin/youtube-dl && \
+        chmod a+rx /usr/local/bin/youtube-dl
 
 COPY docker-entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
